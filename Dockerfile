@@ -1,4 +1,4 @@
-FROM knowagelabs/knowage-server-docker:6.1.1
+FROM knowagelabs/knowage-server-docker:latest
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
