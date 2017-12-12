@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+if [[ "$@" == 'bash' ]]; then
+        exec "$@"
+        exit 0
+fi
+
 if [[ -z "$PUBLIC_ADDRESS" ]]; then
         #get the address of container
         #example : default via 172.17.42.1 dev eth0 172.17.0.0/16 dev eth0 proto kernel scope link src 172.17.0.109
@@ -14,8 +21,10 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
-# allow to run behind a load balancer with SSL termination
-sed -i "s|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\"|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\" proxyPort=\"443\" scheme=\"https\" secure=\"true\" URIEncoding=\"UTF-8\"|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+if [[ -z "$NO_LB" ]]; then
+        # allow to run behind a load balancer with SSL termination
+        sed -i "s|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\"|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\" proxyPort=\"443\" scheme=\"https\" secure=\"true\" URIEncoding=\"UTF-8\"|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+fi
 
 ### CUSTOM END ###
 
