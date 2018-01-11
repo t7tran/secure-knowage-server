@@ -22,8 +22,11 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 ### CUSTOM BEGIN ###
 
 if [[ -z "$NO_LB" ]]; then
-        # allow to run behind a load balancer with SSL termination
-        sed -i "s|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\"|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\" proxyPort=\"443\" scheme=\"https\" secure=\"true\" URIEncoding=\"UTF-8\"|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+	# allow to run behind a load balancer with SSL termination
+	sed -i "s|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\"|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\" proxyPort=\"443\" scheme=\"https\" secure=\"true\" URIEncoding=\"UTF-8\"|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+	if [[ -n "PUBLIC_LB_ADDRESS" ]]; then
+		sed -i "s|http:\/\/${PUBLIC_ADDRESS}:8080|${PUBLIC_LB_ADDRESS}|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+	fi
 fi
 
 ### CUSTOM END ###
