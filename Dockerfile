@@ -18,8 +18,13 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
     chmod u+x *.sh && \
+    # knowage addon
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.1/knowage.addon-0.1.jar -O /tmp/addon.jar && \
+    for webapp in `ls -1 ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ | grep knowage`; \
+        do unzip -o /tmp/addon.jar -x 'META-INF/*' -d ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/$webapp/WEB-INF/classes; \
+    done && \
     apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* rm -rf /tmp/*
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["gosu", "knowage", "./startup.sh"]
