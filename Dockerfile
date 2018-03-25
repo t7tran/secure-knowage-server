@@ -19,7 +19,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
     chmod u+x *.sh && \
     # knowage addon
-    wget https://github.com/coolersport/knowage-addon/releases/download/0.1/knowage.addon-0.1.jar -O /tmp/addon.jar && \
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.2/knowage.addon-0.2.jar -O /tmp/addon.jar && \
     for webapp in `ls -1 ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ | grep knowage`; \
         do unzip -o /tmp/addon.jar -x 'META-INF/*' -d ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/$webapp/WEB-INF/classes; \
     done && \
