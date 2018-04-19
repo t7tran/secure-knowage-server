@@ -21,6 +21,23 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
+if [[ -f "$CA_CERTIFICATE" ]]; then
+	keytool -import -keystore ${JAVA_HOME}/jre/lib/security/cacerts -storepass changeit \
+	    -file $CA_CERTIFICATE -alias custom-root-ca -noprompt >/dev/null
+
+	if [[ -f "$CERTIFICATE" && -f "$CERTIFICATE_KEY" ]]; then
+		openssl pkcs12 -export -in $CERTIFICATE -inkey $CERTIFICATE_KEY \
+		    -out keystore.p12 -CAfile $CA_CERTIFICATE -caname "Root CA" -password pass:$STORE_PASS
+		keytool -importkeystore \
+		    -deststorepass $STORE_PASS -destkeypass $KEY_PASS -destkeystore /keystore.jks \
+	        -srckeystore keystore.p12 -srcstoretype PKCS12 -srcstorepass $STORE_PASS
+	    rm -rf keystore.p12
+
+		sed -i 's|<!-- <Connector port="8443"|<Connector port="8443"|g' ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+		sed -i "s|sslProtocol=\"TLS\" /> -->|sslProtocol=\"TLS\" keystoreFile=\"/keystore.jks\" keystorePass=\"$STORE_PASS\"/>|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+	fi
+fi
+
 if [[ -z "$NO_LB" ]]; then
 	# allow to run behind a load balancer with SSL termination
 	sed -i "s|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\"|port=\"8080\" protocol=\"HTTP/1.1\" redirectPort=\"8443\" proxyPort=\"443\" scheme=\"https\" secure=\"true\" URIEncoding=\"UTF-8\"|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml

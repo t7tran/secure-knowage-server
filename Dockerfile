@@ -1,6 +1,8 @@
 FROM knowagelabs/knowage-server-docker:6.1.1
 
-ENV TZ Australia/Melbourne
+ENV TZ=Australia/Melbourne \
+    STORE_PASS=changme \
+    KEY_PASS=changme
 
 COPY ./entrypoint.sh ./
 
