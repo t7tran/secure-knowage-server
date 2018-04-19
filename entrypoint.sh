@@ -3,7 +3,7 @@ set -e
 
 cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-if [[ "$@" == 'bash' ]]; then
+if [[ "$1" == 'bash' ]]; then
         exec "$@"
         exit 0
 fi
@@ -21,7 +21,15 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
+USESSL=
+MYSQLCA=
+
 if [[ -f "$CA_CERTIFICATE" ]]; then
+	if [[ -n "$SECURE_MYSQL" ]]; then
+		USESSL='?useSSL=true\&amp;requireSSL=true'
+		MYSQLCA="--ssl-ca=$CA_CERTIFICATE"
+	fi
+
 	keytool -import -keystore ${JAVA_HOME}/jre/lib/security/cacerts -storepass changeit \
 	    -file $CA_CERTIFICATE -alias custom-root-ca -noprompt >/dev/null
 
@@ -66,15 +74,15 @@ DB_HOST=$DB_PORT_3306_TCP_ADDR
 DB_PORT=$DB_PORT_3306_TCP_PORT
 
 #insert knowage metadata into db if it doesn't exist
-result=`mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} -e "SHOW TABLES LIKE '%SBI_%';"`
+result=`mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} -e "SHOW TABLES LIKE '%SBI_%';"`
 if [ -z "$result" ]; then
-        mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create.sql"
-        mysql -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create_quartz_schema.sql"
+        mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create.sql"
+        mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create_quartz_schema.sql"
 fi
 
 #replace in server.xml
 old_connection='url="jdbc:mysql://localhost:3306/knowagedb" username="knowageuser" password="knowagepassword"'
-new_connection='url="jdbc:mysql://'${DB_HOST}':'${DB_PORT}'/'${DB_DB}'" username="'${DB_USER}'" password="'${DB_PASS}'"'
+new_connection='url="jdbc:mysql://'${DB_HOST}':'${DB_PORT}'/'${DB_DB}${USESSL}'" username="'${DB_USER}'" password="'${DB_PASS}'"'
 sed -i "s|${old_connection}|${new_connection}|" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
 
 exec "$@"
