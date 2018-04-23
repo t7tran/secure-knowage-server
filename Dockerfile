@@ -20,10 +20,12 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
     chmod u+x *.sh && \
-    # knowage addon
-    wget https://github.com/coolersport/knowage-addon/releases/download/0.2/knowage.addon-0.2.jar -O /tmp/addon.jar && \
-    for webapp in `ls -1 ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ | grep knowage`; \
-        do unzip -o /tmp/addon.jar -x 'META-INF/*' -d ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/$webapp/WEB-INF/classes; \
+    # knowage patched jars
+    cd /tmp && \
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.3/knowage-core-6.1.1.jar && \
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.3/knowage-utils-6.1.1.jar && \
+    for jar in `ls *.jar`; do \
+        find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name $jar -exec cp $jar {} ';'; \
     done && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* rm -rf /tmp/*
