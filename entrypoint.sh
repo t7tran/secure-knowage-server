@@ -21,6 +21,18 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
+if [[ -n "$GLOBAL_NAMING_RESOURCES" ]]; then
+	replacement=$(printf '%s\n' "$GLOBAL_NAMING_RESOURCES" | sed 's/[\&"]/\\&/g' | tr '\n' ' ')
+	sed -i "s|</GlobalNamingResources>|${replacement}</GlobalNamingResources>|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+fi
+
+if [[ -n "$RESOURCE_LINKS" ]]; then
+	replacement=$(printf '%s\n' "$RESOURCE_LINKS" | sed 's/[\&"]/\\&/g' | tr '\n' ' ')
+	for ctx in `find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name 'context.xml'`; do
+		sed -i "s|</Context>|${replacement}</Context>|g" $ctx
+	done
+fi
+
 USESSL=
 MYSQLCA=
 
