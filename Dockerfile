@@ -19,6 +19,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     # complete gosu
     rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/* && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
+    rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/{docs,examples,host-manager,manager} && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
     chown -R knowage:knowage ${MYSQL_SCRIPT_DIRECTORY}/*.sql && \
     chmod u+x *.sh && \
@@ -30,7 +31,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
         find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name $jar -exec cp $jar {} ';'; \
     done && \
     apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* rm -rf /tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/*
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["gosu", "knowage", "./startup.sh"]
