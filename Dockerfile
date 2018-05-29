@@ -5,7 +5,7 @@ ENV TZ=Australia/Melbourne \
     KEY_PASS=changme
 
 COPY ./entrypoint.sh ./
-COPY ./*.sql ./home/knowage/mysql/
+COPY ./*.sql /home/knowage/mysql/
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
