@@ -5,6 +5,7 @@ ENV TZ=Australia/Melbourne \
     KEY_PASS=changme
 
 COPY ./entrypoint.sh ./
+COPY ./*.sql ./home/knowage/mysql/
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
@@ -19,6 +20,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/* && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
+    chown -R knowage:knowage ${MYSQL_SCRIPT_DIRECTORY}/*.sql && \
     chmod u+x *.sh && \
     # knowage patched jars
     cd /tmp && \
