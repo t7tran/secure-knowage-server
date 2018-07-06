@@ -21,8 +21,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
     for d in docs examples host-manager manager; do \
         rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/$d; \
-    done \
-    rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/{docs,examples,host-manager,manager} && \
+    done && \
     # knowage patched jars
     cd /tmp && \
     wget https://github.com/coolersport/knowage-addon/releases/download/0.3/knowage-core-6.1.1.jar && \
