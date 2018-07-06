@@ -19,6 +19,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     # complete gosu
     rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/* && \
     echo '<% response.sendRedirect("/knowage"); %>' > ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/ROOT/index.jsp && \
+    for d in docs examples host-manager manager; do \
+        rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/$d; \
+    done \
     rm -rf ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/{docs,examples,host-manager,manager} && \
     # knowage patched jars
     cd /tmp && \
