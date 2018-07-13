@@ -24,8 +24,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     done && \
     # knowage patched jars
     cd /tmp && \
-    wget https://github.com/coolersport/knowage-addon/releases/download/0.3/knowage-core-6.1.1.jar && \
-    wget https://github.com/coolersport/knowage-addon/releases/download/0.3/knowage-utils-6.1.1.jar && \
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.4/knowage-core-6.1.1.jar && \
+    wget https://github.com/coolersport/knowage-addon/releases/download/0.4/knowage-utils-6.1.1.jar && \
     for jar in `ls *.jar`; do \
         find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name $jar -exec cp $jar {} ';'; \
     done && \

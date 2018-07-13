@@ -21,6 +21,8 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
+sed -i "s/it.eng.spagobi.services.common.FakeSsoService/${SSO_CLASS:-com.genix.protrack.saas.knowage.addon.NoopSsoService}/g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+
 if [[ -n "$GLOBAL_NAMING_RESOURCES" ]]; then
 	replacement=$(printf '%s\n' "$GLOBAL_NAMING_RESOURCES" | sed 's/[\&"]/\\&/g' | tr '\n' ' ')
 	sed -i "s|</GlobalNamingResources>|${replacement}</GlobalNamingResources>|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
