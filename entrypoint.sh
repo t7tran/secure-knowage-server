@@ -21,7 +21,9 @@ sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_D
 
 ### CUSTOM BEGIN ###
 
-sed -i "s/it.eng.spagobi.services.common.FakeSsoService/${SSO_CLASS:-com.genix.protrack.saas.knowage.addon.NoopSsoService}/g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+sed -i "s/it.eng.spagobi.services.common.FakeSsoService/${SSO_CLASS:-com.genix.protrack.saas.knowage.utils.addon.EncryptedUserIdSsoService}/g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
+sed -i "s/it.eng.spagobi.commons.services.LoginModule/${LOGIN_MODULE_CLASS:-com.genix.protrack.saas.knowage.core.LoginModuleEx}/g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/conf/webapp/modules.xml
+sed -i "s/it.eng.spagobi.commons.services.LogoutAction/${LOGOUT_ACTION_CLASS:-com.genix.protrack.saas.knowage.core.LogoutActionEx}/g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/conf/webapp/actions.xml
 
 if [[ -n "$GLOBAL_NAMING_RESOURCES" ]]; then
 	replacement=$(printf '%s\n' "$GLOBAL_NAMING_RESOURCES" | sed 's/[\&"]/\\&/g' | tr '\n' ' ')
