@@ -24,7 +24,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
     cd /tmp && \
     # adding dependencies for add-on code in patched jars
     wget http://repo1.maven.org/maven2/org/encryptor4j/encryptor4j/0.1.2/encryptor4j-0.1.2.jar && \
-    find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name 'knowage-utils-${KNOWAGE_REPO_VERSION}.jar' -exec bash -c 'cp encryptor4j-0.1.2.jar `dirname {}`' ';' && \
+    find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name "knowage-utils-${KNOWAGE_REPO_VERSION}.jar" -exec bash -c 'cp encryptor4j-0.1.2.jar `dirname {}`' ';' && \
     # knowage patched jars
     wget https://github.com/coolersport/knowage-addon/releases/download/0.6/knowage-core-${KNOWAGE_REPO_VERSION}.jar && \
     wget https://github.com/coolersport/knowage-addon/releases/download/0.6/knowage-utils-${KNOWAGE_REPO_VERSION}.jar && \
