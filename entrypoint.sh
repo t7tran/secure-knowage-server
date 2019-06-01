@@ -18,6 +18,7 @@ fi
 sed -i "s|http:\/\/.*:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
 sed -i "s|http:\/\/.*:8080\/knowage|http:\/\/localhost:8080\/knowage|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
 sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/web.xml
+sed -i "s|^org.quartz.jobStore.driverDelegateClass=.\+\$|org.quartz.jobStore.driverDelegateClass=${JOBSTORE_DELEGATE:-org.quartz.impl.jdbcjobstore.StdJDBCDelegate}|" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/classes/quartz.properties
 
 ### CUSTOM BEGIN ###
 
