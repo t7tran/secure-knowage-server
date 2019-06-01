@@ -8,7 +8,7 @@ COPY ./entrypoint.sh ./
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata curl && \
     useradd -d ${KNOWAGE_DIRECTORY} -s /bin/false knowage && \
     # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
