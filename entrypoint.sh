@@ -19,6 +19,9 @@ sed -i "s|http:\/\/.*:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_DIRECTOR
 sed -i "s|http:\/\/.*:8080\/knowage|http:\/\/localhost:8080\/knowage|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
 sed -i "s|http:\/\/localhost:8080|http:\/\/${PUBLIC_ADDRESS}:8080|g" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/web.xml
 sed -i "s|^org.quartz.jobStore.driverDelegateClass=.\+\$|org.quartz.jobStore.driverDelegateClass=${JOBSTORE_DELEGATE:-org.quartz.impl.jdbcjobstore.StdJDBCDelegate}|" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowage/WEB-INF/classes/quartz.properties
+for f in `find ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps -name 'hibernate.cfg.xml'`; do
+  sed -i "s|<property name=\"hibernate.dialect\">.\+</property>|<property name=\"hibernate.dialect\">${DB_DIALECT:-org.hibernate.dialect.MySQLDialect}</property>|" $f
+done
 
 ### CUSTOM BEGIN ###
 
