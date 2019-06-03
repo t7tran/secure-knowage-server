@@ -8,7 +8,14 @@ COPY ./entrypoint.sh ./
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata curl && \
+    # additional configuration to install fonts on stretch-slim
+RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections && \
+    echo 'deb http://deb.debian.org/debian stretch main contrib non-free' > /etc/apt/sources.list && \
+    echo 'deb http://deb.debian.org/debian stretch-updates main contrib non-free' >> /etc/apt/sources.list && \
+    echo 'deb http://security.debian.org stretch/updates main contrib non-free' >> /etc/apt/sources.list && \
+    apt-get update && apt-get upgrade -y && apt-get install -y tzdata curl && \
+    # install fonts for export
+    apt install -y xfonts-base ttf-mscorefonts-installer fontconfig && fc-cache -f && \
     useradd -d ${KNOWAGE_DIRECTORY} -s /bin/false knowage && \
     # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
