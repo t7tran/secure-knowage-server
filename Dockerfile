@@ -40,7 +40,7 @@ RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
         -O ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowagebirtreportengine/WEB-INF/lib/poi-3.9.jar && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
     chown -R knowage:knowage ${MYSQL_SCRIPT_DIRECTORY}/*.sql && \
-    chmod u+x ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin/*.sh && \
+    chmod +x ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin/entrypoint.sh && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
