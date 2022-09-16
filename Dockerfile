@@ -9,7 +9,9 @@ COPY ./*.sql /home/knowage/mysql/
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y tzdata && \
+RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
+    sed -i 's/deb.debian/archive.debian/' /etc/apt/sources.list.d/jessie-backports.list && \
+    apt-get update -o Acquire::Check-Valid-Until=false && apt-get upgrade -y && apt-get install -y tzdata && \
     useradd -d ${KNOWAGE_DIRECTORY} -s /bin/false knowage && \
     # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
