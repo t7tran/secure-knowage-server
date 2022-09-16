@@ -1,2 +1,2 @@
-# docker-secure-knowage-server
+# secure-knowage-server
 A modified version of the official Knowage Server docker
