@@ -44,5 +44,7 @@ RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
+USER knowage
+
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gosu", "knowage", "./startup.sh"]
+CMD ["./startup.sh"]
