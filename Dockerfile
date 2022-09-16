@@ -4,8 +4,7 @@ ENV TZ=Australia/Melbourne \
     STORE_PASS=changme \
     KEY_PASS=changme
 
-COPY ./entrypoint.sh ./
-COPY ./*.sql /home/knowage/mysql/
+COPY --chown=knowage:knowage ./rootfs /
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
@@ -39,12 +38,10 @@ RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
     wget https://repo1.maven.org/maven2/org/apache/poi/poi/3.9/poi-3.9.jar \
         -O ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/webapps/knowagebirtreportengine/WEB-INF/lib/poi-3.9.jar && \
     chown -R knowage:knowage ${KNOWAGE_DIRECTORY} && \
-    chown -R knowage:knowage ${MYSQL_SCRIPT_DIRECTORY}/*.sql && \
-    chmod +x ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin/entrypoint.sh && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
 USER knowage
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["./startup.sh"]
