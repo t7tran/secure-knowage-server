@@ -15,7 +15,7 @@ RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
     useradd -d ${KNOWAGE_DIRECTORY} -s /bin/false knowage && \
     # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
-    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.10/gosu-$dpkgArch" && \
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.14/gosu-$dpkgArch" && \
     chmod +x /usr/local/bin/gosu && \
     gosu nobody true && \
     # complete gosu
