@@ -8,9 +8,13 @@ COPY --chown=knowage:knowage ./rootfs /
 
 WORKDIR ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/bin
 
-RUN sed -i 's/deb.debian/cdn-fastly.deb.debian/g' /etc/apt/sources.list && \
+RUN sed -i 's/deb.debian/archive.debian/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/archive.debian.org\/debian-security/' /etc/apt/sources.list && \
+    sed -i '/jessie-updates/ d' /etc/apt/sources.list && \
     sed -i 's/deb.debian/archive.debian/' /etc/apt/sources.list.d/jessie-backports.list && \
-    apt-get update -o Acquire::Check-Valid-Until=false && apt-get upgrade -y && apt-get install -y tzdata && \
+    sed -i 's/deb /deb [check-valid-until=no] /g' /etc/apt/sources.list && \
+    sed -i 's/deb /deb [check-valid-until=no] /g' /etc/apt/sources.list.d/jessie-backports.list && \
+    apt-get update -o Acquire::Check-Valid-Until=false && apt-get upgrade -y --force-yes && apt-get install -y --force-yes tzdata && \
     useradd -d ${KNOWAGE_DIRECTORY} -s /bin/false knowage && \
     # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
