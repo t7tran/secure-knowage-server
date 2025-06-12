@@ -30,7 +30,7 @@ if [[ -n "$RESOURCE_LINKS" ]]; then
 	done
 fi
 
-USESSL=
+USESSL='?useSSL=false'
 MYSQLCA=
 
 if [[ -n "$SECURE_MYSQL" ]]; then
@@ -70,16 +70,18 @@ DB_PASS=$DB_ENV_MYSQL_PASSWORD
 DB_HOST=$DB_PORT_3306_TCP_ADDR
 DB_PORT=$DB_PORT_3306_TCP_PORT
 
-#insert knowage metadata into db if it doesn't exist
-result=`mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} -e "SHOW TABLES LIKE '%SBI_%';"`
-if [ -z "$result" ]; then
-	mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create.sql"
-	mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create_quartz_schema.sql"
+if [ -z "$DB_BOOTSTRAP_SKIP" ]; then
+	#insert knowage metadata into db if it doesn't exist
+	result=`mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} ${DB_CLI_CONN_OPTS} -e "SHOW TABLES LIKE '%SBI_%';"`
+	if [ -z "$result" ]; then
+		mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} ${DB_CLI_CONN_OPTS} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create.sql"
+		mysql $MYSQLCA -h${DB_HOST} -P${DB_PORT} -u${DB_USER} -p${DB_PASS} ${DB_DB} ${DB_CLI_CONN_OPTS} --execute="source ${MYSQL_SCRIPT_DIRECTORY}/MySQL_create_quartz_schema.sql"
+	fi
 fi
 
 #replace in server.xml
 old_connection='url="jdbc:mysql://localhost:3306/knowagedb" username="knowageuser" password="knowagepassword"'
-new_connection='url="jdbc:mysql://'${DB_HOST}':'${DB_PORT}'/'${DB_DB}${USESSL}'" username="'${DB_USER}'" password="'${DB_PASS}'"'
+new_connection='url="jdbc:mysql://'${DB_HOST}':'${DB_PORT}'/'${DB_DB}${USESSL}${DB_CONN_OPTS}'" username="'${DB_USER}'" password="'${DB_PASS}'"'
 sed -i "s|${old_connection}|${new_connection}|" ${KNOWAGE_DIRECTORY}/${APACHE_TOMCAT_PACKAGE}/conf/server.xml
 
 exec "$@"

@@ -1,0 +1,28 @@
+services:
+  knowage:
+    image: ghcr.io/t7tran/secure-knowage-server:6.1.1-1301
+    depends_on:
+      knowagedb:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_PORT_3306_TCP_ADDR: knowagedb
+      DB_PORT_3306_TCP_PORT: 3306
+      DB_ENV_MYSQL_DATABASE: knowagedb
+      DB_ENV_MYSQL_USER: knowageuser
+      DB_ENV_MYSQL_PASSWORD: knowagepassword
+
+  knowagedb:
+    image: ghcr.io/t7tran/mysql:8.4.4
+    healthcheck:
+      test: bash -c "MYSQL_PWD=knowagerootpassword mysql -u root -e 'show databases'"
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 10s
+    environment:
+      MYSQL_USER: knowageuser
+      MYSQL_PASSWORD: knowagepassword
+      MYSQL_DATABASE: knowagedb
+      MYSQL_ROOT_PASSWORD: knowagerootpassword
