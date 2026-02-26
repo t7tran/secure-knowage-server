@@ -30,11 +30,11 @@ if [[ -n "$RESOURCE_LINKS" ]]; then
 	done
 fi
 
-USESSL='?useSSL=false'
+USESSL='?useSSL=false\&amp;allowPublicKeyRetrieval=true'
 MYSQLCA=
 
 if [[ -n "$SECURE_MYSQL" ]]; then
-	USESSL='?useSSL=true\&amp;requireSSL=true'
+	USESSL='?useSSL=true\&amp;allowPublicKeyRetrieval=true\&amp;requireSSL=true'
 	MYSQLCA="--ssl-ca=$CA_CERTIFICATE"
 fi
 
